@@ -47,6 +47,7 @@ jobs:
             --local-addr 127.0.0.1: \
             --ports 8000 \
             --url wss://$SERVER_IP:8123 \
+            --license "${{secrets.INLETS_LICENSE}}" \
             --token $SERVER_TOKEN &
       - name: Login
         run: >
@@ -55,3 +56,6 @@ jobs:
       - name: Deploy
         run: >
           faas-cli version --gateway http://127.0.0.1:8080
+      - name: Close tunnel
+        run: |
+          killall -9 inlets-pro
