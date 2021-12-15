@@ -24,12 +24,12 @@ jobs:
       - name: Get faas-cli
         run: curl -sLSf https://cli.openfaas.com | sudo sh
       - name: Get inlets
-        run: >
+        run: |
           curl -sLSf https://github.com/inlets/inlets-pro/releases/download/0.9.1/inlets-pro -o /usr/local/bin/inlets-pro
           chmod +x /usr/local/bin/inlets-pro
           inlets-pro version
       - name: Establish tunnel
-        run: > 
+        run: | 
           export SERVER_IP="{{secrets.SERVER_IP}}"
 
           # Create a GitHub Action secret with the token i.e. secrets.SERVER_TOKEN
