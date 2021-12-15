@@ -1,0 +1,56 @@
+name: build
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+permissions:
+  actions: read
+  checks: write
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Get faas-cli
+        run: curl -sLSf https://cli.openfaas.com | sudo sh
+      - name: Get inlets
+        run: >
+          curl -sLSf https://github.com/inlets/inlets-pro/releases/download/0.9.1/inlets-pro -o /usr/local/bin/inlets-pro
+          chmod +x /usr/local/bin/inlets-pro
+          inlets-pro version
+      - name: Establish tunnel
+        run: > 
+          export SERVER_IP="{{secrets.SERVER_IP}}"
+
+          # Create a GitHub Action secret with the token i.e. secrets.SERVER_TOKEN
+          export SERVER_TOKEN="{{secrets.SERVER_TOKEN}}"
+
+          # Assuming the tunnel is running as a Kubernetes Pod in the same namespace
+          # use "gateway" otherwise "gateway.openfaas"
+
+          export UPSTREAM="gateway"
+          export PORT=8080
+
+          inlets-pro tcp client \
+            --local $PORT:$UPSTREAM:$PORT \
+            --local-addr 127.0.0.1: \
+            --ports 8000 \
+            --url wss://$SERVER_IP:8123 \
+            --token $SERVER_TOKEN &
+      - name: Login
+        run: >
+          echo ${{secrets.OPENFAAS_PASSWORD}} | 
+          faas-cli login --gateway http://127.0.0.1:8080 --password-stdin
+      - name: Deploy
+        run: >
+          faas-cli version --gateway http://127.0.0.1:8080
