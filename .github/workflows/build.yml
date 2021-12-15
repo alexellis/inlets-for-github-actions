@@ -53,9 +53,14 @@ jobs:
         run: >
           echo ${{secrets.OPENFAAS_PASSWORD}} | 
           faas-cli login --gateway http://127.0.0.1:8080 --password-stdin
-      - name: Deploy
+      - name: Print server version
         run: >
           faas-cli version --gateway http://127.0.0.1:8080
+      - name: Deploy a store function
+        run: |
+          faas-cli store deploy nodeinfo --gateway http://127.0.0.1:8080
+          faas-cli list --gateway http://127.0.0.1:8080
+
       - name: Close tunnel
         run: |
           killall -9 inlets-pro
