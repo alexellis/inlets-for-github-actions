@@ -31,10 +31,10 @@ jobs:
           inlets-pro version
       - name: Establish tunnel
         run: | 
-          export SERVER_IP="{{secrets.SERVER_IP}}"
+          export SERVER_IP="${{secrets.SERVER_IP}}"
 
           # Create a GitHub Action secret with the token i.e. secrets.SERVER_TOKEN
-          export SERVER_TOKEN="{{secrets.SERVER_TOKEN}}"
+          export SERVER_TOKEN="${{secrets.SERVER_TOKEN}}"
 
           # Assuming the tunnel is running as a Kubernetes Pod in the same namespace
           # use "gateway" otherwise "gateway.openfaas"
