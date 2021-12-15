@@ -25,8 +25,9 @@ jobs:
         run: curl -sLSf https://cli.openfaas.com | sudo sh
       - name: Get inlets
         run: |
-          curl -sLSf https://github.com/inlets/inlets-pro/releases/download/0.9.1/inlets-pro -o /usr/local/bin/inlets-pro
-          chmod +x /usr/local/bin/inlets-pro
+          curl -sLSf https://github.com/inlets/inlets-pro/releases/download/0.9.1/inlets-pro -o ./inlets-pro
+          chmod +x ./inlets-pro
+          sudo mv ./inlets-pro /usr/local/bin/
           inlets-pro version
       - name: Establish tunnel
         run: | 
